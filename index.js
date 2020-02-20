@@ -5,7 +5,7 @@ function todos(state = [], action) {
         case 'REMOVE_TODO':
             return state.filter(todo => todo.id !== action.id)
         case 'TOGGLE_TODO':
-            return state.map((todo) => todo !== action.id ? todo :
+            return state.map((todo) => todo.id !== action.id ? todo :
                 Object.assign({}, todo, { complete: !todo.complete }))
         default:
             return state
@@ -20,6 +20,13 @@ function goals(state = [], action) {
             return state.filter(goal => goal.id !== action.id)
         default:
             return state
+    }
+}
+
+function app(state = {}, action) {
+    return {
+        todos: todos(state.todos, action),
+        goals: goals(state.goals, action)
     }
 }
 
@@ -48,7 +55,7 @@ function createStore(reducer) {
     }
 }
 
-const store = createStore(todos)
+const store = createStore(app)
 store.subscribe(() => {
     console.log('The new state is: ', store.getState())
 })
@@ -69,4 +76,37 @@ store.dispatch({
         name: 'Read a book',
         complete: true
     }
+})
+
+store.dispatch({
+    type: 'REMOVE_TODO',
+    id: 0
+})
+
+store.dispatch({
+    type: 'TOGGLE_TODO',
+    id: 1
+})
+
+store.dispatch({
+    type: 'ADD_GOAL',
+    goal: {
+        id: 0,
+        name: 'Read 100 books',
+        complete: true
+    }
+})
+
+store.dispatch({
+    type: 'ADD_GOAL',
+    goal: {
+        id: 1,
+        name: 'Read 200 books',
+        complete: true
+    }
+})
+
+store.dispatch({
+    type: 'REMOVE_GOAL',
+    id: 1
 })
