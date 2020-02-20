@@ -6,7 +6,7 @@ function todos(state = [], action) {
     return state
 }
 
-function createStore() {
+function createStore(reducer) {
     let state
     let listeners = []
 
@@ -20,7 +20,7 @@ function createStore() {
     }
 
     const dispatch = (action) => {
-        state = todos(state, action)
+        state = reducer(state, action)
         listeners.forEach((listener) => listener())
     }
 
@@ -30,3 +30,26 @@ function createStore() {
         dispatch
     }
 }
+
+const store = createStore(todos)
+store.subscribe(() => {
+    console.log('The new state is: ', store.getState())
+})
+
+store.dispatch({
+    type: 'ADD_TODO',
+    todo: {
+        id: 0,
+        name: 'Learn React',
+        complete: false
+    }
+})
+
+store.dispatch({
+    type: 'ADD_TODO',
+    todo: {
+        id: 1,
+        name: 'Read a book',
+        complete: true
+    }
+})
