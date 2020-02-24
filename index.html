@@ -3,6 +3,7 @@
 
 <head>
     <title>Udacity Todos Goals</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js"></script>
 </head>
 
 <body>
@@ -21,31 +22,6 @@
     <script type='text/javascript'>
         function generateId() {
             return Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36);
-        }
-        // Library Code
-        function createStore(reducer) {
-            let state
-            let listeners = []
-
-            const getState = () => state
-
-            const subscribe = (listener) => {
-                listeners.push(listener)
-                return () => {
-                    listeners = listeners.filter((l) => l !== listener)
-                }
-            }
-
-            const dispatch = (action) => {
-                state = reducer(state, action)
-                listeners.forEach((listener) => listener())
-            }
-
-            return {
-                getState,
-                subscribe,
-                dispatch
-            }
         }
 
         // App Code
@@ -115,14 +91,10 @@
             }
         }
 
-        function app(state = {}, action) {
-            return {
-                todos: todos(state.todos, action),
-                goals: goals(state.goals, action)
-            }
-        }
-
-        const store = createStore(app)
+        const store = Redux.createStore(Redux.combineReducers({
+            todos,
+            goals
+        }))
 
         store.subscribe(() => {
             const { goals, todos } = store.getState()
@@ -133,36 +105,6 @@
             goals.forEach(addGoalToDOM)
             todos.forEach(addTodoToDOM)
         })
-
-        // store.dispatch(addTodoAction({
-        //     id: 0,
-        //     name: 'Learn React',
-        //     complete: false
-        // }))
-
-        // store.dispatch(addTodoAction({
-        //     id: 1,
-        //     name: 'Read a book',
-        //     complete: true
-        // }))
-
-        // store.dispatch(removeTodoAction(0))
-
-        // store.dispatch(toggleTodoAction(1))
-
-        // store.dispatch(addGoalAction({
-        //     id: 0,
-        //     name: 'Read 100 books',
-        //     complete: true
-        // }))
-
-        // store.dispatch(addGoalAction({
-        //     id: 1,
-        //     name: 'Read 200 books',
-        //     complete: true
-        // }))
-
-        // store.dispatch(removeGoalAction(1))
 
         function addTodo() {
             const input = document.getElementById('todo')
